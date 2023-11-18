@@ -39,4 +39,4 @@ echo "Production build is completed."
 php artisan optimize:clear
 
 # Output information
-echo "Congratulations! Setup Complete 🎉"
+echo "Congratulations! Setup Complete ??"
