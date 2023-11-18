@@ -6,7 +6,6 @@ use App\Contracts\WithdrawalRepositoryInterface;
 use App\Models\Transaction;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class WithdrawalRepository implements WithdrawalRepositoryInterface
@@ -52,14 +51,14 @@ class WithdrawalRepository implements WithdrawalRepositoryInterface
         if ($user->account_type == Transaction::INDIVIDUAL_ACCOUNT) {
             $this->setIndividualAccountWithdrawalFee($withdrawalAmount, $userWiseFee);
         } else {
-       
+
             $this->setBusinessAccountWithdrawalFee($user, $withdrawalAmount, $userWiseFee);
         }
     }
 
     protected function setIndividualAccountWithdrawalFee($withdrawalAmount, $userWiseFee)
     {
-        $isFriday =  Carbon::now()->isFriday();
+        $isFriday = Carbon::now()->isFriday();
 
         if (! $isFriday && $withdrawalAmount > 1000) {
             $amountForFee = $withdrawalAmount - 1000;
@@ -79,16 +78,15 @@ class WithdrawalRepository implements WithdrawalRepositoryInterface
             $this->withdrawalFee = 0;
         }
 
-        
     }
 
     protected function setBusinessAccountWithdrawalFee($user, $withdrawalAmount, $userWiseFee)
     {
         $totalWithdrawal = Transaction::query()
-            ->where('transaction_type','withdrawal')
+            ->where('transaction_type', 'withdrawal')
             ->where('user_id', $user->id)
             ->sum('amount');
-    
+
         if ($totalWithdrawal >= 50000) {
             $userWiseFee = 0.015;
         }
