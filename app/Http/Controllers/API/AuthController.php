@@ -49,6 +49,11 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         try {
+            $request->validate([
+                'email' => 'required|string',
+                'password' => 'required|string',
+            ]);
+
             if (! Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
                 return response([
                     'message' => 'Email or password is incorrect',
