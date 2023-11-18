@@ -69,13 +69,17 @@ class WithdrawalRepository implements WithdrawalRepositoryInterface
         $startDate = Carbon::now()->startOfMonth();
         $endDate = Carbon::now()->endOfMonth();
 
-        $totalWithdrawalsWithinLimit = Transaction::whereBetween('date', [$startDate, $endDate])
+        $totalWithdrawalsWithinLimit = Transaction::query()
+            ->where('user_id', Auth::user()->id)
+            ->whereBetween('date', [$startDate, $endDate])
             ->where('transaction_type', 'withdrawal')
             ->sum('amount');
 
         if (($totalWithdrawalsWithinLimit + $withdrawalAmount) <= 5000) {
             $this->withdrawalFee = 0;
         }
+
+        
     }
 
     protected function setBusinessAccountWithdrawalFee($user, $withdrawalAmount, $userWiseFee)
